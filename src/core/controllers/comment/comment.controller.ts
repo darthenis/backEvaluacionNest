@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { CreateCommentDto } from 'src/core/dto/createComment.dto';
 import { EditCommentDto } from 'src/core/dto/editComment.dto';
@@ -28,6 +29,12 @@ export class CommentController {
     @Delete(":id")
     deleteComment(@Param("id") id: string){
         return this.commentService.deleteComment(id)
+    }
+
+    @UseGuards( AdminGuard )
+    @Patch("/active/:id")
+    switchActive(@Param("id") id: string){
+        return this.commentService.switchActive(id);
     }
 
 }

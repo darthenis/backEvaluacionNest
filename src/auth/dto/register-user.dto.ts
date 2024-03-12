@@ -1,5 +1,21 @@
-import { IsEmail, MinLength } from "class-validator";
+import { IsDateString, IsEmail, IsOptional, IsString, IsUrl, MinLength } from "class-validator";
 
+class Address{
+    @IsString()
+    street: string;
+
+    @IsString()
+    location : string;
+
+    @IsString()
+    city: string;
+
+    @IsString()
+    country: string;
+
+    @IsString()
+    cp: string;
+}
 
 export class RegisterUserDto {
         @MinLength(2) 
@@ -13,22 +29,14 @@ export class RegisterUserDto {
 
         address:  Address;
     
-        birthday: string;
+        @IsDateString()
+        birthday: Date;
 
+        @IsString()
         phone:    string;
 
-        date:     string;
-}
+        @IsOptional()
+        @IsUrl()    
+        profileUrl: string
 
-class Address{
-
-    street:   string;
-
-    location: string;
-
-    city:     string;
-
-    country:  string;
-
-    cp:       string;
 }

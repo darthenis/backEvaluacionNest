@@ -6,6 +6,7 @@ import { CreateCommentDto } from '../dto/createComment.dto';
 import { JwtUtilsService } from 'src/auth/jwt/jwt.service';
 import { UserService } from 'src/auth/services/user.service';
 import { EditCommentDto } from '../dto/editComment.dto';
+import { Role } from 'src/auth/interfaces/role.enum';
 
 @Injectable()
 export class CommentService {
@@ -31,7 +32,7 @@ export class CommentService {
                 author:{
                     name: user.name,
                     userId: user._id,
-                    rol: user.rol
+                    rol: user.role
                 },
                 creationDate: new Date(),
             })
@@ -63,8 +64,10 @@ export class CommentService {
                 const exists = await this.userService.userExistsById(userId);
     
                 if(!exists) throw new UnauthorizedException();
+
+                const role = await this.userService.getRol(userId);
     
-                if(comment.author.userId !== userId) throw new UnauthorizedException();
+                if(comment.author.userId !== userId && role !== Role.ADMIN) throw new UnauthorizedException();
 
                 comment.set(editCommentsDto);
 
@@ -92,17 +95,32 @@ export class CommentService {
             const exists = await this.userService.userExistsById(userId);
     
             if(!exists) throw new UnauthorizedException();
+
+            const role = await this.userService.getRol(userId);
     
-            if(comment.author.userId !== userId) throw new UnauthorizedException();
+            if( comment.author.userId !== userId && role !== Role.ADMIN ) throw new UnauthorizedException();
 
             await comment.deleteOne();
 
         } catch (error) {
 
-            return error;
+            throw error;
         }
 
+    }
+
+    async switchActive(id: string){
+
+        const comment = await this.commentModel.findById(id);
+
+        if(!comment) throw new NotFoundException();
         
+        comment.active = !comment.active;
+
+        await comment.save();
+
+        return comment.toObject();
+
     }
 
 }

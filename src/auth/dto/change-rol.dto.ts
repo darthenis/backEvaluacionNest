@@ -1,10 +1,10 @@
-import { Rol } from "../interfaces/rol.enum";
+import { Role } from "../interfaces/role.enum";
 import { IsEnum } from "class-validator";
 
 
 export class ChangeRolDto {
 
-    @IsEnum(Rol)
-    rol : Rol;
+    @IsEnum(Role)
+    role : Role;
 
 }

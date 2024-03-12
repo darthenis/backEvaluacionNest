@@ -44,7 +44,7 @@ export class UserService {
     }
 
     async getRol(id: string){
-        return (await this.userModel.findById(id)).rol;
+        return (await this.userModel.findById(id)).role;
     }
 
     async register(registerUserDto: RegisterUserDto): Promise<LoginResponse>{
@@ -97,7 +97,7 @@ export class UserService {
 
             if(!user) throw new NotFoundException();
         
-            user.rol = changeRolDto.rol;
+            user.role = changeRolDto.role;
 
             await user.save();
             const { password:_, ...rest } = user;

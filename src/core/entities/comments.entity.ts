@@ -29,6 +29,9 @@ export class Comment {
     @Prop({ type: AuthorSchema, required: true })
     author : Author;
 
+    @Prop({default: true})
+    active : boolean;
+
     @Prop({required: true})
     creationDate : Date;
 

@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Inject } from "@nestjs/common";
 import { JwtUtilsService } from "../jwt/jwt.service";
 import { UserService } from "../services/user.service";
+import { Role } from "../interfaces/role.enum";
 
 
 export class AdminGuard implements CanActivate{
@@ -15,9 +16,9 @@ export class AdminGuard implements CanActivate{
         
         const userId = await this.jwtUtilsService.getId();
 
-        const rol = await this.userService.getRol(userId);
+        const role = await this.userService.getRol(userId);
 
-        if(rol === "ADMIN") return Promise.resolve(true);
+        if(role === Role.ADMIN) return Promise.resolve(true);
 
         return Promise.resolve(false);
     }

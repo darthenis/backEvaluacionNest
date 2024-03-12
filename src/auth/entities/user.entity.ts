@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { Rol } from "../interfaces/rol.enum";
+import { Role } from "../interfaces/role.enum";
 
 
 @Schema({_id: false})
@@ -42,14 +42,17 @@ export class User {
     @Prop({required: true, minlength: 8})
     password?: string;
 
+    @Prop({required: true})
     birthday: string;
 
+    @Prop({required: true})
     phone:    string;
 
-    date:     string;
-    
-    @Prop({ type: String, enum: Rol, default: Rol.USER })
-    rol : Rol;
+    @Prop({required:false, default: null})
+    profileUrl: string;
+
+    @Prop({ type: String, enum: Role, default: Role.USER })
+    role : Role;
 
 }
 

@@ -1,5 +1,6 @@
+import { Optional } from "@nestjs/common";
 import { Type } from "class-transformer";
-import { IsEmail, IsString, MinLength, ValidateNested } from "class-validator";
+import { IsDateString, IsEmail, IsOptional, IsString, IsUrl, MinLength, ValidateNested } from "class-validator";
 
 class Address{
     @IsString()
@@ -31,10 +32,15 @@ export class CreateUserDto {
         @ValidateNested()
         @Type(() => Address)
         address:  Address;
-    
-        birthday: string;
 
+        @IsDateString()
+        birthday: Date;
+
+        @IsString()
         phone:    string;
 
-        date:     string;
+        @IsOptional()
+        @IsUrl()    
+        profileUrl: string
+
 }
