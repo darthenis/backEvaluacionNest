@@ -52,7 +52,7 @@ export class UserService {
 
             return {
                 user,
-                token: this.jwtUtilsService.createJwt(user)
+                token: this.jwtUtilsService.createJwt(user._id)
             }
     }
 
@@ -71,7 +71,7 @@ export class UserService {
 
         return{
             user : rest,
-            token: this.jwtUtilsService.createJwt(user)
+            token: this.jwtUtilsService.createJwt(user._id)
         }
 
     }
@@ -123,7 +123,21 @@ export class UserService {
         
         return rest;
                 
-                 
+    }
+
+    async checkToken(){
+
+        const userId = await this.jwtUtilsService.getId();
+
+        const user : Document<User> = await this.userModel.findById(userId)
+
+        const { password, ...rest } = user.toObject();
+
+        return {
+            user: rest,
+            token: this.jwtUtilsService.createJwt(userId)
+        }
+
     }
 
 }

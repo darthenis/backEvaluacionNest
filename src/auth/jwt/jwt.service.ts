@@ -13,8 +13,8 @@ export class JwtUtilsService {
               private jwtService: JwtService ){}
 
 
-  createJwt(user : User){
-                return this.jwtService.sign({id: user._id});
+  createJwt(id : string){
+                return this.jwtService.sign({id});
             }
 
   async getId():Promise<string>{

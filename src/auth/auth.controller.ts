@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { UserService } from './services/user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -32,6 +32,12 @@ export class AuthController {
     @Patch("/profile")
     updateUser(@Body() editUserDto: EditUserDto){
         return this.userService.editUser(editUserDto);
+    }
+
+    @UseGuards( AuthGuard )
+    @Get("check-token")
+    checkToken(){
+        return this.userService.checkToken();
     }
 
 
