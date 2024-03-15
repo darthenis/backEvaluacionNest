@@ -22,6 +22,8 @@ export class CommentService {
             
             const id = await this.jwtUtilsService.getId();
 
+            console.log(id)
+
             const user = await this.userService.findUserById(id);
     
             if(!user) throw new UnauthorizedException("user not found")
@@ -47,8 +49,20 @@ export class CommentService {
 
     }
 
-    getCommentsByEpisodeId(episodeId: string):Promise<Comment[]>{
-        return this.commentModel.find({episodeId})
+    async getCommentsByEpisodeId(episodeId: string):Promise<Comment[]>{
+
+
+        const comments  = await this.commentModel.find({episodeId})
+
+        const userId = await this.jwtUtilsService.getId();
+
+        const role = await this.userService.getRol(userId);
+
+        if(role === Role.ADMIN){
+            return comments;
+        } else {
+            return comments.filter(c => c.active);
+        }
     }
 
     async editComment(id: string, editCommentsDto: EditCommentDto):Promise<Comment>{
@@ -69,9 +83,7 @@ export class CommentService {
     
                 if(comment.author.userId !== userId && role !== Role.ADMIN) throw new UnauthorizedException();
 
-                comment.set(editCommentsDto);
-
-                await comment.save();
+                await comment.updateOne({message: editCommentsDto.message})
 
                 return comment;
 
@@ -109,7 +121,7 @@ export class CommentService {
 
     }
 
-    async switchActive(id: string){
+    async switchActive(id: string):Promise<Comment>{
 
         const comment = await this.commentModel.findById(id);
 

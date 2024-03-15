@@ -30,11 +30,11 @@ export class FavoriteService {
 
             const existsUser = await this.userService.userExistsById(userId);
 
-            if(!existsUser) throw new NotFoundException();
+            if(!existsUser) throw new NotFoundException("Not found user");
 
             const existsFavorite = await this.existsEpisodeFavorite(createFavoriteEpisodeDto.episodeId, userId);
 
-            if(existsFavorite) throw new BadRequestException();
+            if(existsFavorite) throw new BadRequestException("Favorite already exists");
 
             const newFavorite = await this.favoriteModel.create({
                                             userId,
@@ -47,19 +47,21 @@ export class FavoriteService {
             await newFavorite.save();
 
             return newFavorite;
+
         } catch (error) {
-            return error;
+
+            throw error;
         }
 
             
     }
 
     private async existsEpisodeFavorite(episodeId : string, userId: string):Promise<boolean>{
-            const episodeFavorite = await this.favoriteModel.find({episode: { id: episodeId }})
+            const episodeFavorite = await this.favoriteModel.find({userId})
         
-            if(!episodeFavorite) return false;
+            if(!episodeFavorite.length) return false;
 
-            if(episodeFavorite.find( e => e.userId === userId)) return true;
+            if(episodeFavorite.find( e => e.episode.id === episodeId)) return true;
 
             return false;
 
@@ -67,18 +69,22 @@ export class FavoriteService {
 
     async deleteFavorite(id:string){
         try {
-            const favorite = await this.favoriteModel.findById(id);
-
-            if(!favorite) throw new NotFoundException();
     
             const userId = await this.jwtUtilsService.getId();
-    
-            if(favorite.userId !== userId) throw new UnauthorizedException();
+
+            const favorites = await this.favoriteModel.find({userId});
+
+            const favorite = favorites.find(f => f.episode.id === id);
+
+            if(!favorites.length || !favorite) throw new NotFoundException();
     
             await favorite.deleteOne()
 
+            return favorites.filter(f => f.episode.id !== id);
+
         } catch (error) {
-            return error;
+            
+            throw error;
         }
    
     }

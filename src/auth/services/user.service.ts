@@ -1,6 +1,6 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException }from '@nestjs/common';
+import { BadRequestException, HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException }from '@nestjs/common';
 import { InjectModel  } from '@nestjs/mongoose';
-import { Document, Model } from 'mongoose';
+import mongoose, { Document, Model } from 'mongoose';
 import { CreateUserDto } from 'src/auth/dto/create-user.dto';
 import { User } from 'src/auth/entities/user.entity';
 import * as bcryptjs from 'bcryptjs';
@@ -10,6 +10,7 @@ import { LoginUserDto } from 'src/auth/dto/login-user.dto';
 import { JwtUtilsService } from '../jwt/jwt.service';
 import { ChangeRolDto } from '../dto/change-rol.dto';
 import { EditUserDto } from '../dto/edit-user.dto';
+import { PublicInfoUser } from '../interfaces/user-public.interface';
 
 @Injectable()
 export class UserService {
@@ -35,10 +36,11 @@ export class UserService {
             return user;
 
         } catch (error) {
+
             if(error.code === 11000){
-                console.log(error)
-                throw new BadRequestException("Email already exists")
+                throw new HttpException('Email already exists', HttpStatus.CONFLICT);
             }
+
             throw new InternalServerErrorException("Something was wrong")
         }
     }
@@ -137,6 +139,14 @@ export class UserService {
             user: rest,
             token: this.jwtUtilsService.createJwt(userId)
         }
+
+    }
+
+    async getPublicInfo(ids : string[]):Promise<PublicInfoUser[]>{
+        console.log(ids)
+      
+
+        return await this.userModel.find({ '_id': { $in: ids } }).select(["name", "profileUrl"])
 
     }
 

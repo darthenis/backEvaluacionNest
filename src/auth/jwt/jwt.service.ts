@@ -3,7 +3,6 @@ import { JwtService } from "@nestjs/jwt";
 import { JwtPayload } from "../interfaces/JwtPayload.interface";
 import { REQUEST } from "@nestjs/core";
 import { Request } from "express";
-import { User } from "../entities/user.entity";
 
 @Injectable({ scope: Scope.REQUEST })
 export class JwtUtilsService {

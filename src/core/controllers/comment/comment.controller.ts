@@ -32,7 +32,7 @@ export class CommentController {
     }
 
     @UseGuards( AdminGuard )
-    @Patch("/active/:id")
+    @Get("/active/:id")
     switchActive(@Param("id") id: string){
         return this.commentService.switchActive(id);
     }

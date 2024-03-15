@@ -41,4 +41,11 @@ export class AuthController {
     }
 
 
+    @UseGuards( AuthGuard )
+    @Post("/public-info")
+    getPublicInfo(@Body() ids: string[]){
+        return this.userService.getPublicInfo(ids);
+    }
+
+
 }
